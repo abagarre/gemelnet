@@ -51,6 +51,8 @@ Future enhancements:
 
 - Create proxy objects for remote nodes (Mininet: Cluster Edition)
 """
+import pdb
+
 import errno
 import os
 import pty
@@ -747,6 +749,7 @@ class Docker ( Host ):
                      'port_bindings': {},
                      'ports': [],
                      'dns': [],
+                     'privileged': False
                      }
         defaults.update( kwargs )
 
@@ -773,6 +776,7 @@ class Docker ( Host ):
         # setup docker client
         # self.dcli = docker.APIClient(base_url='unix://var/run/docker.sock')
         self.dcli = docker.from_env().api
+        self.cli = docker.from_env()
 
         # pull image if it does not exist
         self._check_image_exists(dimage, True)
@@ -783,7 +787,7 @@ class Docker ( Host ):
         debug("dcmd: %s\n" % str(self.dcmd))
         info("%s: kwargs %s\n" % (name, str(kwargs)))
 
-        # creats host config for container
+        # creates host config for container
         # see: https://docker-py.readthedocs.org/en/latest/hostconfig/
         hc = self.dcli.create_host_config(
             network_mode=self.network_mode,
@@ -833,6 +837,10 @@ class Docker ( Host ):
         # call original Node.__init__
         Host.__init__(self, name, **kwargs)
 
+        # connect to public-net if required
+        if kwargs.get("pubnet", False):
+            self._connect_to_pubnet()
+
         # let's initially set our resource limits
         self.update_resources(**self.resources)
 
@@ -845,6 +853,8 @@ class Docker ( Host ):
         # container is started and configured by Containernet:
         cmd_field = self.get_cmd_field(self.dimage)
         entryp_field = self.get_entrypoint_field(self.dimage)
+        # info("Entrypoint is {}".format(entryp_field))
+
         if entryp_field is not None:
             if cmd_field is None:
                 cmd_field = list()
@@ -882,6 +892,38 @@ class Docker ( Host ):
             error("Error during image inspection of {}:{}"
                   .format(imagename, ex))
         return None
+
+    def _create_pub_net(self, name):
+        """
+        creates the "public" network of mini-gemel
+        :return:
+        """
+        return self.cli.networks.create(name, driver="bridge")
+
+    @property
+    def _docker_nets(self):
+        return {x.name: x for x in self.cli.networks.list()}
+
+    def _get_pub_net(self):
+        """
+        returns the "public" network of mini-gemel infrastructure,
+        creates it if not already exists
+        """
+        pubnetname = self.dnameprefix + "_pubnet"
+        res = self._docker_nets.get(pubnetname) if pubnetname in self._docker_nets else self._create_pub_net(pubnetname)
+        net_info = {v["Name"]: v for v in self.cli.api.networks()}
+
+        assert net_info[res.name]["Driver"] == "bridge"
+        return res
+
+    def _connect_to_pubnet(self):
+        """
+        connects the docker container to mini-gemel public net
+        :return:
+        """
+        info("Connecting host {} to public net", self.name)
+        pubnet = self._get_pub_net()
+        pubnet.connect(self.dc)
 
     def get_entrypoint_field(self, imagename):
         """

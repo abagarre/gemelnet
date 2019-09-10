@@ -119,6 +119,40 @@ CONTAINERNET_VERSION = "3.0"
 # so it can be removed at a later time
 SAP_PREFIX = 'sap.'
 
+GEMEL_SDN = '''
+
+                         MMMMMMM                     MMMMMMMMMMMMMM
+                      MMMMMMMMMMMM                MMMMMMMMMMMMMMMMMMM
+                    MMMMMMMMMMMMMMMM                MMMMMMMMMMMMMMMMM
+               MMMMMMMMMMMMMMMMMMMMMM              MMMMMMMMMMMMM   MM
+            MMMMMMMMMMMMMMMMMMMMMMMMMMM            MMMMMMMMMMM
+          MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM        MMMMMMMMMMMM
+        MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM    MMMMMMMMMMMMM
+        MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+       MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+       MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+       MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+      MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+     MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+    MMMMMMMM  MMMMMMMM  MMMMMMMMMMMMMMMMMMMM
+   MMMMM  M   MMMMMMM       MNMMMMMMMMMMMMMM
+ MMMMM  MMMM  MMMMMM          MMMMM  MMMMMM
+MMMMMM  MMM  MMMMMM           MMMMM   MMMMM
+MMMMM     M  MMMMM            MMMM     MMMM
+MMMM        MMMMM           MMMMMM      MMMMM
+ MMM       MMMMMMM          NMMMMM      MMMMM
+ MM         MMMM             MMMM         MMM
+MMMM         MMMM           MMMM           MM
+ MMM          MMM           MMM            MMM
+ MMMM         MMMM         MMM              MMM
+ MMMMM         MMM        MMMM               MMM
+   MMMMMM      MMMM        MMMM              MMMMMM
+      MMM       MMMMM       MMMM              MMMMMM
+                  MMMMMM                        MMMMM
+                    MMMMM
+
+'''
+
 class Mininet( object ):
     "Network emulation with hosts spawned in network namespaces."
 
@@ -612,6 +646,10 @@ class Mininet( object ):
 
     def start( self ):
         "Start controller and switches."
+
+        info('Starting mini-gemel')
+        info(GEMEL_SDN)
+
         if not self.built:
             self.build()
         info( '*** Starting controller\n' )
