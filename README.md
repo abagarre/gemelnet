@@ -13,7 +13,7 @@ The installation is exactly same as Containernet:
 ```
 $ sudo apt-get install ansible git aptitude
 $ git clone https://github.com/blackvvine/gemelnet
-$ cd containernet/ansible
+$ cd gemelnet/ansible
 $ sudo ansible-playbook -i "localhost," -c local install.yml
 $ cd ..
 $ sudo python setup.py install
