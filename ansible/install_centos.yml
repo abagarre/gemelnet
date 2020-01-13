@@ -7,7 +7,7 @@
 
    - name: openstack repo (for OVS)
      yum:
-       name: centos-release-openstack-pike
+       name: centos-release-openstack-queens
        state: latest
    
    - name: updates yum
@@ -61,9 +61,9 @@
      pip: name=python-iptables state=latest
 
    - name: build and install Containernet (using Mininet installer)
-     shell: containernet/util/install.sh
+     shell: util/install.sh
      args:
-       chdir: ../../
+       chdir: ../
 
    - name: install Containernet Python egg etc.
      shell: make develop
