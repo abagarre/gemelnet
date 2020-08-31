@@ -45,16 +45,6 @@
    - name: install python-iptables
      pip: name=python-iptables state=latest executable={{pip_path.stdout}}
 
-   - name: build and install Containernet (using Mininet installer)
-     shell: containernet/util/install.sh
-     args:
-       chdir: ../../
-
-   - name: install Containernet Python egg etc.
-     shell: make develop
-     args:
-       chdir: ../
-
    - name: download 'ubuntu' docker image for Containernet example
      shell: docker pull ubuntu:trusty
      tags:
